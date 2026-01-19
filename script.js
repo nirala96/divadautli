@@ -333,15 +333,41 @@ function initJourneyScrolling() {
     const scrollSection = document.querySelector('.manufacturing-scroll');
     const steps = document.querySelectorAll('.scroll-step');
     const visuals = document.querySelectorAll('.visual-image');
+    const visualColumn = document.querySelector('.scroll-visual-column');
     
     if (!scrollSection || steps.length === 0) return;
+
+    function clearMobileStepImages() {
+        scrollSection.querySelectorAll('.mobile-step-image').forEach(el => el.remove());
+    }
+
+    function setupMobileStepImages() {
+        clearMobileStepImages();
+        steps.forEach((step, index) => {
+            const visual = visuals[index];
+            const img = visual ? visual.querySelector('img') : null;
+            if (!img) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mobile-step-image';
+            wrapper.appendChild(img.cloneNode(true));
+            step.appendChild(wrapper);
+        });
+    }
     
     // Check if we're on mobile
-    const isMobile = () => window.innerWidth <= 1024;
+    const isMobile = window.innerWidth <= 1024;
     
-    if (isMobile()) {
-        // On mobile, use scroll-based image switching
-        initMobileScrolling();
+    if (isMobile) {
+        // On mobile, show first image and all text
+        if (visualColumn) {
+            visualColumn.classList.add('is-hidden');
+        }
+        setupMobileStepImages();
+        if (visuals.length > 0) {
+            visuals[0].classList.add('active');
+        }
+        steps.forEach(step => step.classList.add('active'));
         return;
     }
     
@@ -352,20 +378,32 @@ function initJourneyScrolling() {
     function updateActiveStep() {
         const viewportHeight = window.innerHeight;
         const centerLine = viewportHeight * 0.5;
-        
-        let newActiveIndex = currentActiveIndex;
-        let closestDistance = Number.POSITIVE_INFINITY;
+        let newActiveIndex = -1;
         
         steps.forEach((step, index) => {
             const stepRect = step.getBoundingClientRect();
-            const stepCenter = stepRect.top + (stepRect.height / 2);
-            const distance = Math.abs(stepCenter - centerLine);
-            
-            if (distance < closestDistance) {
-                closestDistance = distance;
+            if (stepRect.top <= centerLine && stepRect.bottom >= centerLine) {
                 newActiveIndex = index;
             }
         });
+        
+        if (newActiveIndex === -1) {
+            const firstRect = steps[0].getBoundingClientRect();
+            const lastRect = steps[steps.length - 1].getBoundingClientRect();
+            
+            if (centerLine < firstRect.top) {
+                newActiveIndex = 0;
+            } else if (centerLine > lastRect.bottom) {
+                newActiveIndex = steps.length - 1;
+            } else {
+                for (let i = steps.length - 1; i >= 0; i--) {
+                    if (steps[i].getBoundingClientRect().top < centerLine) {
+                        newActiveIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
         
         steps.forEach((step, index) => {
             step.classList.remove('active', 'passed', 'upcoming');
@@ -397,58 +435,6 @@ function initJourneyScrolling() {
         }
     }
     
-    function initMobileScrolling() {
-        // Mobile-specific scroll behavior
-        let mobileTicking = false;
-        
-        function updateMobileView() {
-            const viewportHeight = window.innerHeight;
-            const viewportCenter = viewportHeight * 0.5;
-            
-            let activeIndex = 0;
-            let minDistance = Number.POSITIVE_INFINITY;
-            
-            // Find which step is closest to viewport center
-            steps.forEach((step, index) => {
-                const rect = step.getBoundingClientRect();
-                const stepCenter = rect.top + (rect.height / 2);
-                const distance = Math.abs(stepCenter - viewportCenter);
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    activeIndex = index;
-                }
-            });
-            
-            // Update background color
-            scrollSection.setAttribute('data-active-step', String(activeIndex));
-            
-            // Update active visual to match active step
-            visuals.forEach((visual, index) => {
-                if (index === activeIndex) {
-                    visual.classList.add('active');
-                } else {
-                    visual.classList.remove('active');
-                }
-            });
-        }
-        
-        window.addEventListener('scroll', () => {
-            if (!mobileTicking) {
-                window.requestAnimationFrame(() => {
-                    updateMobileView();
-                    mobileTicking = false;
-                });
-                mobileTicking = true;
-            }
-        });
-        
-        // Initial mobile update
-        visuals[0]?.classList.add('active');
-        scrollSection.setAttribute('data-active-step', '0');
-        setTimeout(updateMobileView, 100);
-    }
-    
     // Scroll listener with RAF throttling
     window.addEventListener('scroll', () => {
         if (!ticking) {
@@ -475,10 +461,26 @@ function initJourneyScrolling() {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            location.reload(); // Reload to re-initialize with correct behavior
-        }, 300);
-    });
-}
+            if (window.innerWidth <= 1024) {
+                // Mobile: show all
+                if (visualColumn) {
+                    visualColumn.classList.add('is-hidden');
+                }
+                setupMobileStepImages();
+                steps.forEach(step => step.classList.add('active'));
+                visuals.forEach((v, i) => {
+                    if (i === 0) v.classList.add('active');
+                    else v.classList.remove('active');
+                });
+            } else {
+                // Desktop: reset to first
+                if (visualColumn) {
+                    visualColumn.classList.remove('is-hidden');
+                }
+                clearMobileStepImages();
+                currentActiveIndex = 0;
+                steps.forEach((step, i) => {
+                    if (i === 0) step.classList.add('active');
                     else step.classList.remove('active');
                 });
                 visuals.forEach((v, i) => {
