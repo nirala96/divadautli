@@ -1185,6 +1185,179 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
+   Instagram Section
+   ============================================ */
+.instagram-section {
+    padding: var(--space-3xl) 0;
+    background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+}
+
+.instagram-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+}
+
+.instagram-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
+    border-radius: 50px;
+    color: white;
+    margin-bottom: var(--space-xl);
+    box-shadow: 0 8px 24px rgba(131, 58, 180, 0.3);
+}
+
+.instagram-followers {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.instagram-follow-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #F77737 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    margin-top: var(--space-lg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 16px rgba(131, 58, 180, 0.3);
+}
+
+.instagram-follow-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(131, 58, 180, 0.4);
+}
+
+.instagram-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.instagram-reel {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.instagram-reel .instagram-media {
+    border: none !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    border-radius: 16px;
+}
+
+.instagram-cta {
+    padding: var(--space-xl);
+}
+
+.instagram-cta h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+    color: var(--color-black);
+}
+
+.instagram-cta p {
+    font-size: 1.125rem;
+    color: var(--color-gray);
+    margin-bottom: var(--space-xl);
+    line-height: 1.6;
+}
+
+.instagram-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+    padding: var(--space-xl);
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.instagram-stats .stat-item {
+    text-align: center;
+}
+
+.instagram-stats .stat-number {
+    display: block;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-black);
+    margin-bottom: var(--space-xs);
+}
+
+.instagram-stats .stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.instagram-cta .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+@media (max-width: 900px) {
+    .instagram-content {
+        grid-template-columns: 1fr;
+        gap: var(--space-2xl);
+    }
+    
+    .instagram-reel {
+        order: 1;
+    }
+    
+    .instagram-cta {
+        order: 2;
+        padding: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .instagram-badge {
+        padding: var(--space-sm) var(--space-lg);
+        font-size: 0.875rem;
+    }
+    
+    .instagram-badge svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .instagram-followers {
+        font-size: 1rem;
+    }
+    
+    .instagram-stats {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+    }
+    
+    .instagram-cta h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================
    CTA Section
    ============================================ */
 .cta-section {
