@@ -327,7 +327,7 @@ function debounce(func, wait = 20) {
 
 /**
  * Manufacturing Journey Scroll Storytelling
- * Napkin.ai inspired sticky horizontal scroll
+ * Separate implementations for mobile and desktop
  */
 function initJourneyScrolling() {
     const scrollSection = document.querySelector('.manufacturing-scroll');
@@ -337,12 +337,15 @@ function initJourneyScrolling() {
     
     if (!scrollSection || steps.length === 0) return;
 
-    function clearMobileStepImages() {
+    // Determine viewport type
+    const isMobile = () => window.innerWidth <= 1024;
+    
+    // ========== MOBILE IMPLEMENTATION ==========
+    function initMobileScrolling() {
+        // Clear any existing mobile images
         scrollSection.querySelectorAll('.mobile-step-image').forEach(el => el.remove());
-    }
-
-    function setupMobileStepImages() {
-        clearMobileStepImages();
+        
+        // Add images to each step for mobile
         steps.forEach((step, index) => {
             const visual = visuals[index];
             const img = visual ? visual.querySelector('img') : null;
@@ -353,143 +356,134 @@ function initJourneyScrolling() {
             wrapper.appendChild(img.cloneNode(true));
             step.appendChild(wrapper);
         });
+        
+        // Set up Intersection Observer for mobile background color changes
+        const observerOptions = {
+            root: null,
+            rootMargin: '-40% 0px -40% 0px',
+            threshold: 0
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Array.from(steps).indexOf(entry.target);
+                    scrollSection.setAttribute('data-active-step', String(index));
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all steps
+        steps.forEach(step => observer.observe(step));
+        
+        // Set initial background
+        scrollSection.setAttribute('data-active-step', '0');
     }
     
-    // Check if we're on mobile
-    const isMobile = window.innerWidth <= 1024;
-    
-    if (isMobile) {
-        // On mobile, show first image and all text
-        if (visualColumn) {
-            visualColumn.classList.add('is-hidden');
-        }
-        setupMobileStepImages();
-        if (visuals.length > 0) {
-            visuals[0].classList.add('active');
-        }
-        steps.forEach(step => step.classList.add('active'));
-        return;
-    }
-    
-    // Desktop: Sticky scroll behavior
-    let ticking = false;
-    let currentActiveIndex = 0;
-    
-    function updateActiveStep() {
-        const viewportHeight = window.innerHeight;
-        const centerLine = viewportHeight * 0.5;
-        let newActiveIndex = -1;
+    // ========== DESKTOP IMPLEMENTATION ==========
+    function initDesktopScrolling() {
+        // Remove mobile images if they exist
+        scrollSection.querySelectorAll('.mobile-step-image').forEach(el => el.remove());
         
-        steps.forEach((step, index) => {
-            const stepRect = step.getBoundingClientRect();
-            if (stepRect.top <= centerLine && stepRect.bottom >= centerLine) {
-                newActiveIndex = index;
-            }
-        });
+        let ticking = false;
+        let currentActiveIndex = 0;
         
-        if (newActiveIndex === -1) {
-            const firstRect = steps[0].getBoundingClientRect();
-            const lastRect = steps[steps.length - 1].getBoundingClientRect();
+        function updateActiveStep() {
+            const viewportHeight = window.innerHeight;
+            const centerLine = viewportHeight * 0.5;
+            let newActiveIndex = -1;
             
-            if (centerLine < firstRect.top) {
-                newActiveIndex = 0;
-            } else if (centerLine > lastRect.bottom) {
-                newActiveIndex = steps.length - 1;
-            } else {
-                for (let i = steps.length - 1; i >= 0; i--) {
-                    if (steps[i].getBoundingClientRect().top < centerLine) {
-                        newActiveIndex = i;
-                        break;
+            steps.forEach((step, index) => {
+                const stepRect = step.getBoundingClientRect();
+                if (stepRect.top <= centerLine && stepRect.bottom >= centerLine) {
+                    newActiveIndex = index;
+                }
+            });
+            
+            if (newActiveIndex === -1) {
+                const firstRect = steps[0].getBoundingClientRect();
+                const lastRect = steps[steps.length - 1].getBoundingClientRect();
+                
+                if (centerLine < firstRect.top) {
+                    newActiveIndex = 0;
+                } else if (centerLine > lastRect.bottom) {
+                    newActiveIndex = steps.length - 1;
+                } else {
+                    for (let i = steps.length - 1; i >= 0; i--) {
+                        if (steps[i].getBoundingClientRect().top < centerLine) {
+                            newActiveIndex = i;
+                            break;
+                        }
                     }
                 }
             }
+            
+            // Update step states
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'passed', 'upcoming');
+                
+                if (index === newActiveIndex) {
+                    step.classList.add('active');
+                } else if (index < newActiveIndex) {
+                    step.classList.add('passed');
+                } else {
+                    step.classList.add('upcoming');
+                }
+            });
+            
+            // Update background color
+            scrollSection.setAttribute('data-active-step', String(newActiveIndex));
+            
+            // Update visuals if changed
+            if (newActiveIndex !== currentActiveIndex) {
+                currentActiveIndex = newActiveIndex;
+                
+                visuals.forEach((visual, index) => {
+                    if (index === newActiveIndex) {
+                        visual.classList.add('active');
+                    } else {
+                        visual.classList.remove('active');
+                    }
+                });
+            }
         }
         
-        steps.forEach((step, index) => {
-            step.classList.remove('active', 'passed', 'upcoming');
-            
-            if (index === newActiveIndex) {
-                step.classList.add('active');
-            } else if (index < newActiveIndex) {
-                step.classList.add('passed');
-            } else {
-                step.classList.add('upcoming');
+        // Scroll listener with RAF throttling
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updateActiveStep();
+                    ticking = false;
+                });
+                ticking = true;
             }
         });
         
-        // Always update background color via data attribute
-        scrollSection.setAttribute('data-active-step', String(newActiveIndex));
-        
-        // Only update visuals if active index changed
-        if (newActiveIndex !== currentActiveIndex) {
-            currentActiveIndex = newActiveIndex;
-            
-            // Update visuals
-            visuals.forEach((visual, index) => {
-                if (index === newActiveIndex) {
-                    visual.classList.add('active');
-                } else {
-                    visual.classList.remove('active');
-                }
-            });
-        }
+        // Initial update
+        updateActiveStep();
+        visuals[0]?.classList.add('active');
     }
     
-    // Scroll listener with RAF throttling
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateActiveStep();
-                ticking = false;
-            });
-            ticking = true;
-        }
-    });
+    // ========== INITIALIZE BASED ON VIEWPORT ==========
+    if (isMobile()) {
+        initMobileScrolling();
+    } else {
+        initDesktopScrolling();
+    }
     
-    // Initial update - set first step active and trigger initial calculation
-    steps[0]?.classList.add('active');
-    visuals[0]?.classList.add('active');
-    scrollSection.setAttribute('data-active-step', '0');
-    
-    // Run initial update after a short delay to ensure DOM is ready
-    setTimeout(() => {
-        updateActiveStep();
-    }, 100);
-    
-    // Handle resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            if (window.innerWidth <= 1024) {
-                // Mobile: show all
-                if (visualColumn) {
-                    visualColumn.classList.add('is-hidden');
-                }
-                setupMobileStepImages();
-                steps.forEach(step => step.classList.add('active'));
-                visuals.forEach((v, i) => {
-                    if (i === 0) v.classList.add('active');
-                    else v.classList.remove('active');
-                });
+    // Handle resize - reinitialize if crossing mobile/desktop breakpoint
+    let wasMobile = isMobile();
+    window.addEventListener('resize', debounce(() => {
+        const nowMobile = isMobile();
+        if (wasMobile !== nowMobile) {
+            wasMobile = nowMobile;
+            if (nowMobile) {
+                initMobileScrolling();
             } else {
-                // Desktop: reset to first
-                if (visualColumn) {
-                    visualColumn.classList.remove('is-hidden');
-                }
-                clearMobileStepImages();
-                currentActiveIndex = 0;
-                steps.forEach((step, i) => {
-                    if (i === 0) step.classList.add('active');
-                    else step.classList.remove('active');
-                });
-                visuals.forEach((v, i) => {
-                    if (i === 0) v.classList.add('active');
-                    else v.classList.remove('active');
-                });
+                initDesktopScrolling();
             }
-        }, 250);
-    });
+        }
+    }, 250));
 }
 
 /**
