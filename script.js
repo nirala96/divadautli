@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     initProcessTimeline();
     initJourneyScrolling();
+    initCatalogue();
 });
 
 /**
@@ -508,3 +509,166 @@ function initCursorFollower() {
     });
 }
 */
+
+/**
+ * Catalogue Lazy Loading
+ * Progressively loads images as user scrolls
+ */
+function initCatalogue() {
+    const catalogueGrid = document.getElementById('catalogueGrid');
+    const catalogueLoader = document.getElementById('catalogueLoader');
+    
+    if (!catalogueGrid) return;
+    
+    // All catalogue images
+    const catalogueImages = [
+        'Handwoven Crop Shirt – Soft Blue Stripes2.webp',
+        'IMG_0381.webp',
+        'IMG_0383.webp',
+        'IMG_0389.webp',
+        'IMG_0397.webp',
+        'IMG_0402.webp',
+        'IMG_0406.webp',
+        'IMG_0409.webp',
+        'IMG_0414.webp',
+        'IMG_0418.webp',
+        'IMG_0420.webp',
+        'IMG_0429.webp',
+        'Pink Cotton Wrap Top with Floral Motifs.webp',
+        'Smocked Plaid Shirt – Ivory & Green Checks4.webp',
+        'ailyciwkmnn8b2dgdmpa.webp',
+        'almt5b4eezyat5ic1wlv.webp',
+        'axaqg0fancnetoicvr7u.webp',
+        'b0juuwafodr1e3oqot0p.webp',
+        'b3etajsa8yaw4apjmfki.webp',
+        'cnescsc5kkn3elu1cpxj.webp',
+        'dkerv3vaeqvarddzpux9.webp',
+        'dvczza2yfdxuxjlikeij.webp',
+        'e4g1w6t2zotybakt01sq.webp',
+        'ebkhwenajdyxg6gm5rbk.webp',
+        'eotp2twgvqoj01x1btvm.webp',
+        'fbikdsv1acsm7isrckim.webp',
+        'g5oe5h8ebdlm898msy7a.webp',
+        'gnemswvbg9cadmmvaig6.webp',
+        'gyvlwtlb2jee1wgzgxv1.webp',
+        'i73gabvoqavgq3njq4i5.webp',
+        'jbcf1sityhpjmknunvkw.webp',
+        'jlkk45ytxsgvwqvbh4ms.webp',
+        'jufx7srosuqq1nxv836y.webp',
+        'lojwysrhwgpkfhzl3bxs.webp',
+        'luwhidncjqdz447mblky.webp',
+        'mekm1vv4pxqqyn6zndm3.webp',
+        'nayxt0zdvl0y7erqzo1o.webp',
+        'oa08ebj4zhi6eqo9uhpg.webp',
+        'oib5jvq0o2rhnuuq2831.webp',
+        'otimg7meyikb5gmwquo5.webp',
+        'pao2f1jcvajqtvcrp4my.webp',
+        'qpvdt1yxeprasv6sbkql.webp',
+        'v9y4ybwy0grrdbavobrv.webp',
+        'vcvwgdufeeoqxi41mkvt.webp',
+        've59mgcm39dpk4ohktwb.webp',
+        'w0fjlddxfyrih0kpiwdr.webp',
+        'wo9i6x5xfl94dadkfugp.webp',
+        'xlpkhsurnuxrczqrmybt.webp',
+        'yw4p7rxzinztdz29a2ig.webp',
+        'zcwqzsc7owxbvtczlkdi.webp',
+        'zdtzxfwcwp8cukjixfoh.webp',
+        'zmuioafywt9conja0ysq.webp',
+        'zyiydto89dbsoxkrbszw.webp'
+    ];
+    
+    let currentIndex = 0;
+    const imagesPerLoad = 6; // Load 6 images at a time
+    let isLoading = false;
+    
+    // Create image element with lazy loading
+    function createImageElement(imageName, index) {
+        const imageItem = document.createElement('div');
+        imageItem.className = 'catalogue-item';
+        imageItem.style.opacity = '0';
+        imageItem.style.transform = 'translateY(20px)';
+        
+        const img = document.createElement('img');
+        img.dataset.src = `images/catelogue/${imageName}`;
+        img.alt = imageName.replace(/\.(webp|jpg|png)$/i, '').replace(/[_-]/g, ' ');
+        img.className = 'catalogue-image';
+        
+        imageItem.appendChild(img);
+        
+        // Animate in after a short delay
+        setTimeout(() => {
+            imageItem.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            imageItem.style.opacity = '1';
+            imageItem.style.transform = 'translateY(0)';
+        }, index * 100); // Stagger animation
+        
+        return imageItem;
+    }
+    
+    // Load images function
+    function loadImages() {
+        if (isLoading || currentIndex >= catalogueImages.length) {
+            if (currentIndex >= catalogueImages.length && catalogueLoader) {
+                catalogueLoader.style.display = 'none';
+            }
+            return;
+        }
+        
+        isLoading = true;
+        if (catalogueLoader) {
+            catalogueLoader.style.display = 'flex';
+        }
+        
+        const endIndex = Math.min(currentIndex + imagesPerLoad, catalogueImages.length);
+        const fragment = document.createDocumentFragment();
+        
+        for (let i = currentIndex; i < endIndex; i++) {
+            const imageElement = createImageElement(catalogueImages[i], i - currentIndex);
+            fragment.appendChild(imageElement);
+        }
+        
+        catalogueGrid.appendChild(fragment);
+        
+        // Lazy load the actual images using Intersection Observer
+        const images = catalogueGrid.querySelectorAll('img[data-src]');
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+        
+        currentIndex = endIndex;
+        
+        setTimeout(() => {
+            isLoading = false;
+            if (catalogueLoader && currentIndex >= catalogueImages.length) {
+                catalogueLoader.style.display = 'none';
+            }
+        }, 500);
+    }
+    
+    // Initial load
+    loadImages();
+    
+    // Infinite scroll observer
+    if (catalogueLoader) {
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !isLoading && currentIndex < catalogueImages.length) {
+                    loadImages();
+                }
+            });
+        }, {
+            rootMargin: '200px' // Start loading 200px before loader is visible
+        });
+        
+        scrollObserver.observe(catalogueLoader);
+    }
+}
