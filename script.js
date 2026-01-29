@@ -589,7 +589,9 @@ function initCatalogue() {
         imageItem.style.transform = 'translateY(20px)';
         
         const img = document.createElement('img');
-        img.dataset.src = `images/catelogue/${imageName}`;
+        // Use absolute path from root to work in both homepage and /catalogue/ subdirectory
+        const basePath = window.location.pathname.includes('/catalogue/') ? '../images/catelogue/' : 'images/catelogue/';
+        img.dataset.src = `${basePath}${imageName}`;
         img.alt = imageName.replace(/\.(webp|jpg|png)$/i, '').replace(/[_-]/g, ' ');
         img.className = 'catalogue-image';
         
