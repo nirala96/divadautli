@@ -2454,3 +2454,160 @@ button:focus-visible {
     color: var(--color-accent);
     font-weight: 600;
 }
+
+/* ============================================
+   Risk and Compliance Policy Page
+   ============================================ */
+.policy-page {
+    padding: calc(80px + var(--space-3xl)) 0 var(--space-3xl);
+    background-color: var(--color-cream);
+    min-height: 100vh;
+}
+
+.policy-page-content {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--color-white);
+    padding: var(--space-3xl);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.policy-page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+    margin-bottom: var(--space-2xl);
+    text-align: center;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.policy-page-section {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-beige);
+}
+
+.policy-page-section:last-of-type {
+    border-bottom: none;
+}
+
+.policy-page-section h2 {
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+    margin-bottom: var(--space-md);
+    line-height: 1.4;
+}
+
+.policy-page-section p {
+    font-size: 1rem;
+    color: var(--color-dark-gray);
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+}
+
+.policy-page-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: var(--space-md);
+}
+
+.policy-page-list li {
+    font-size: 1rem;
+    color: var(--color-dark-gray);
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-xl);
+    position: relative;
+}
+
+.policy-page-list li::before {
+    content: "•";
+    position: absolute;
+    left: var(--space-md);
+    color: var(--color-accent);
+    font-weight: bold;
+    font-size: 1.5rem;
+    line-height: 1.8;
+}
+
+.policy-page-list li strong {
+    color: var(--color-charcoal);
+    font-weight: 600;
+}
+
+.policy-page-contact {
+    margin-top: var(--space-lg);
+    padding: var(--space-lg);
+    background-color: var(--color-off-white);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--color-accent);
+}
+
+.policy-page-contact p {
+    margin-bottom: var(--space-sm);
+}
+
+.policy-page-contact p:last-child {
+    margin-bottom: 0;
+}
+
+.policy-page-contact a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: var(--transition-base);
+    font-weight: 500;
+}
+
+.policy-page-contact a:hover {
+    color: var(--color-charcoal);
+    text-decoration: underline;
+}
+
+.policy-page-back {
+    margin-top: var(--space-2xl);
+    text-align: center;
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-beige);
+}
+
+@media (max-width: 768px) {
+    .policy-page {
+        padding: calc(80px + var(--space-lg)) 0 var(--space-lg);
+    }
+    
+    .policy-page-content {
+        padding: var(--space-lg);
+    }
+    
+    .policy-page-title {
+        font-size: 1.75rem;
+        margin-bottom: var(--space-lg);
+    }
+    
+    .policy-page-section {
+        margin-bottom: var(--space-lg);
+        padding-bottom: var(--space-lg);
+    }
+    
+    .policy-page-section h2 {
+        font-size: 1.25rem;
+    }
+    
+    .policy-page-section p,
+    .policy-page-list li {
+        font-size: 0.9375rem;
+    }
+    
+    .policy-page-list li {
+        padding-left: var(--space-lg);
+    }
+    
+    .policy-page-list li::before {
+        left: var(--space-xs);
+    }
+}
