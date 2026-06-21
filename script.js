@@ -521,7 +521,7 @@ function initCatalogue() {
     if (!catalogueGrid) return;
     
     // All catalogue images
-    const catalogueImages = [
+    const baseImages = [
         'Handwoven Crop Shirt – Soft Blue Stripes2.webp',
         'IMG_0381.webp',
         'IMG_0383.webp',
@@ -577,12 +577,19 @@ function initCatalogue() {
         'zyiydto89dbsoxkrbszw.webp'
     ];
     
+    // Map base images to objects with categories (alternating for demonstration)
+    const catalogueImages = baseImages.map((src, index) => {
+        const category = index % 2 === 0 ? 'premium' : 'kichkich';
+        return { src, category };
+    });
+    
+    let filteredImages = [...catalogueImages];
     let currentIndex = 0;
     const imagesPerLoad = 6; // Load 6 images at a time
     let isLoading = false;
     
     // Create image element with lazy loading
-    function createImageElement(imageName, index) {
+    function createImageElement(imageData, index) {
         const imageItem = document.createElement('div');
         imageItem.className = 'catalogue-item';
         imageItem.style.opacity = '0';
@@ -591,8 +598,8 @@ function initCatalogue() {
         const img = document.createElement('img');
         // Use absolute path from root to work in both homepage and /catalogue/ subdirectory
         const basePath = window.location.pathname.includes('/catalogue/') ? '../images/catelogue/' : 'images/catelogue/';
-        img.dataset.src = `${basePath}${imageName}`;
-        img.alt = imageName.replace(/\.(webp|jpg|png)$/i, '').replace(/[_-]/g, ' ');
+        img.dataset.src = `${basePath}${imageData.src}`;
+        img.alt = imageData.src.replace(/\.(webp|jpg|png)$/i, '').replace(/[_-]/g, ' ');
         img.className = 'catalogue-image';
         
         imageItem.appendChild(img);
@@ -602,15 +609,15 @@ function initCatalogue() {
             imageItem.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             imageItem.style.opacity = '1';
             imageItem.style.transform = 'translateY(0)';
-        }, index * 100); // Stagger animation
+        }, (index % imagesPerLoad) * 100); // Stagger animation
         
         return imageItem;
     }
     
     // Load images function
     function loadImages() {
-        if (isLoading || currentIndex >= catalogueImages.length) {
-            if (currentIndex >= catalogueImages.length && catalogueLoader) {
+        if (isLoading || currentIndex >= filteredImages.length) {
+            if (currentIndex >= filteredImages.length && catalogueLoader) {
                 catalogueLoader.style.display = 'none';
             }
             return;
@@ -621,11 +628,11 @@ function initCatalogue() {
             catalogueLoader.style.display = 'flex';
         }
         
-        const endIndex = Math.min(currentIndex + imagesPerLoad, catalogueImages.length);
+        const endIndex = Math.min(currentIndex + imagesPerLoad, filteredImages.length);
         const fragment = document.createDocumentFragment();
         
         for (let i = currentIndex; i < endIndex; i++) {
-            const imageElement = createImageElement(catalogueImages[i], i - currentIndex);
+            const imageElement = createImageElement(filteredImages[i], i - currentIndex);
             fragment.appendChild(imageElement);
         }
         
@@ -650,7 +657,7 @@ function initCatalogue() {
         
         setTimeout(() => {
             isLoading = false;
-            if (catalogueLoader && currentIndex >= catalogueImages.length) {
+            if (catalogueLoader && currentIndex >= filteredImages.length) {
                 catalogueLoader.style.display = 'none';
             }
         }, 500);
@@ -659,11 +666,46 @@ function initCatalogue() {
     // Initial load
     loadImages();
     
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    if (filterBtns.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Update active state
+                filterBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Get selected category
+                const selectedCategory = e.target.dataset.filter;
+                
+                // Filter images
+                if (selectedCategory === 'all') {
+                    filteredImages = [...catalogueImages];
+                } else {
+                    filteredImages = catalogueImages.filter(img => img.category === selectedCategory);
+                }
+                
+                // Reset grid
+                catalogueGrid.innerHTML = '';
+                currentIndex = 0;
+                isLoading = false;
+                
+                // Make sure loader is visible if needed
+                if (catalogueLoader) {
+                    catalogueLoader.style.display = filteredImages.length > 0 ? 'flex' : 'none';
+                }
+                
+                // Load new set of images
+                loadImages();
+            });
+        });
+    }
+    
     // Infinite scroll observer
     if (catalogueLoader) {
         const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !isLoading && currentIndex < catalogueImages.length) {
+                if (entry.isIntersecting && !isLoading && currentIndex < filteredImages.length) {
                     loadImages();
                 }
             });
