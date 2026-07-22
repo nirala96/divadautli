@@ -1399,6 +1399,73 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
+   Credentials Section
+   ============================================ */
+.credentials-section {
+    padding: var(--space-3xl) 0;
+    background-color: var(--color-off-white);
+}
+
+.credential-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+.credential-card {
+    background-color: var(--color-white);
+    border: 1px solid rgba(10, 10, 10, 0.08);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.credential-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-beige);
+    color: var(--color-black);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+}
+
+.credential-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-xs);
+}
+
+.credential-card p {
+    font-size: 0.95rem;
+    color: var(--color-gray);
+    margin-bottom: var(--space-md);
+}
+
+.credential-card strong {
+    font-size: 0.95rem;
+    color: var(--color-black);
+}
+
+@media (max-width: 1024px) {
+    .credential-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .credential-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .credential-card {
+        padding: var(--space-lg);
+    }
+}
+
+/* ============================================
    Gallery Section
    ============================================ */
 .gallery {
@@ -1774,6 +1841,13 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-light-gray);
     max-width: 280px;
     line-height: 1.6;
+}
+
+.footer-credentials {
+    margin-top: var(--space-sm);
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    max-width: 320px;
 }
 
 .footer-links {
