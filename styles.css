@@ -228,6 +228,14 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-black);
 }
 
+.logo-image {
+    height: 32px; /* Adjust height as needed */
+    width: auto;
+    transition: transform var(--transition-base);
+}
+
+.logo:hover .logo-image { transform: scale(1.05); }
+
 .nav-links {
     display: flex;
     align-items: center;
@@ -2174,9 +2182,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .footer-brand .logo {
     display: inline-block;
+    margin-bottom: var(--space-sm);
+}
+
+.footer-brand .logo {
+    display: inline-block;
     font-size: 1.25rem;
     color: var(--color-white);
     margin-bottom: var(--space-sm);
+    letter-spacing: 0; /* Reset text logo spacing */
 }
 
 .footer-brand p {
@@ -2188,9 +2202,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .footer-credentials {
     margin-top: var(--space-sm);
-    font-size: 0.875rem;
-    color: var(--color-accent);
+    font-size: 0.8rem;
+    color: var(--color-gray);
     max-width: 320px;
+    font-family: var(--font-sans);
+    letter-spacing: 0.05em;
 }
 
 .footer-links {
