@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Clients Tracking — Diva Daulti</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .clients-wrap{max-width:900px;margin:40px auto;padding:24px}
+    .clients-form{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+    .clients-form input[type=text]{flex:1;padding:10px}
+    .client-card{border:1px solid #e6e6e9;padding:12px;margin-bottom:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+    .client-meta{display:flex;flex-direction:column}
+    .badge{background:#f3f4f6;color:#111;padding:4px 8px;border-radius:999px;font-size:12px}
+    .actions button{margin-left:8px}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">Diva Daulti</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="clients.html">Clients</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="clients-wrap">
+    <h1>Clients Tracking</h1>
+    <p>Add clients; each new client is automatically assigned a merchandiser (Anjali, Ritu, Anamika) in round-robin order.</p>
+
+    <form id="clientForm" class="clients-form">
+      <input type="text" id="clientName" placeholder="Client name (required)" required>
+      <select id="clientType">
+        <option value="brand">Brand</option>
+        <option value="wholesale">Wholesale</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Add Client</button>
+    </form>
+
+    <div id="clientsList" aria-live="polite"></div>
+  </main>
+
+  <script src="clients.js"></script>
+</body>
+</html>
