@@ -21,10 +21,10 @@
     --color-whatsapp-dark: #128C7E;
     
     /* Typography - Napkin.ai Style */
-    --font-serif: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
     
     /* Spacing */
     --space-xs: 0.5rem;
@@ -2193,6 +2193,10 @@ h1, h2, h3, h4, h5, h6 {
     letter-spacing: 0; /* Reset text logo spacing */
 }
 
+.footer-brand .logo-image {
+    height: 128px;
+}
+
 .footer-brand p {
     font-size: 0.9375rem;
     color: var(--color-light-gray);
@@ -2207,6 +2211,21 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 320px;
     font-family: var(--font-sans);
     letter-spacing: 0.05em;
+}
+
+.footer-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-top: var(--space-md);
+    padding: 8px 12px;
+    background-color: var(--color-off-white);
+    border-radius: var(--radius-sm);
+}
+
+.footer-badge img {
+    height: 56px;
+    width: auto;
+    display: block;
 }
 
 .footer-links {
@@ -2230,8 +2249,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer-col ul a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.9375rem;
     color: var(--color-light-gray);
+}
+
+.footer-col ul a svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
 }
 
 .footer-col ul a:hover {
