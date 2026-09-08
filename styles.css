@@ -229,7 +229,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .logo-image {
-    height: 32px; /* Adjust height as needed */
+    height: 48px; /* Adjust height as needed */
     width: auto;
     transition: transform var(--transition-base);
 }

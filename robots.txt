@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /clients.html
+
+Sitemap: https://divadaulti.com/sitemap.xml
